@@ -1,0 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Nunito:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Nunito', sans-serif;
+  }
+}
+
+@keyframes float-up {
+  0%   { transform: translateY(0) scale(0.5) rotate(-5deg); opacity: 0; }
+  6%   { opacity: 0.9; }
+  94%  { opacity: 0.5; }
+  100% { transform: translateY(-110vh) scale(1.1) rotate(15deg); opacity: 0; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.65; }
+  50%       { opacity: 1; }
+}
+
+@keyframes shimmer-gold {
+  0%   { background-position: -300% center; }
+  100% { background-position: 300% center; }
+}
+
+@keyframes digit-pop {
+  0%   { transform: translateY(-8px) scale(0.88); opacity: 0; }
+  65%  { transform: translateY(1px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(6px); }
+}
+
+.font-display {
+  font-family: 'Playfair Display', serif;
+}
+
+.animate-float-up   { animation: float-up linear infinite; }
+.animate-fade-in-up { animation: fade-in-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-pulse-soft { animation: pulse-soft 2.8s ease-in-out infinite; }
+.animate-bounce-subtle { animation: bounce-subtle 2s ease-in-out infinite; }
+
+.digit-pop { animation: digit-pop 0.38s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+.text-shimmer-gold {
+  background: linear-gradient(90deg, #c8820a 0%, #e8a020 20%, #ffd060 45%, #fff7d6 55%, #ffd060 70%, #e8a020 85%, #c8820a 100%);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer-gold 4s linear infinite;
+}
+
+::-webkit-scrollbar { width: 0; }

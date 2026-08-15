@@ -1,0 +1,10 @@
+{
+  "description": "Create personalized countdown landing pages for special occasions like Lunar New Year, anniversaries, and birthdays, enhancing celebrations with unique themes.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
