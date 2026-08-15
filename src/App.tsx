@@ -158,6 +158,7 @@ interface EventSectionProps {
   imgUrl: string
   imgAlt: string
   imgLeft: boolean
+  mobileImageFirst?: boolean
   glowColor: string
   accentColor: string
   sectionBg: string
@@ -166,12 +167,15 @@ interface EventSectionProps {
 function EventSection({
   id, num, emoji, title, subtitle, caption,
   time, mode, dateLabel, imgUrl, imgAlt,
-  imgLeft, glowColor, accentColor, sectionBg,
+  imgLeft, mobileImageFirst = false, glowColor, accentColor, sectionBg,
 }: EventSectionProps) {
   const [ref, inView] = useInView()
 
   const imgPanel = (
-    <div className="relative h-[55vw] max-h-[480px] md:max-h-none md:h-full overflow-hidden" style={{ backgroundColor: '#111' }}>
+    <div
+      className={`relative h-[55vw] max-h-[480px] md:max-h-none md:h-full overflow-hidden ${mobileImageFirst ? 'order-1 md:order-none' : 'order-2 md:order-none'}`}
+      style={{ backgroundColor: '#111' }}
+    >
       <img
         src={imgUrl}
         alt={imgAlt}
@@ -202,7 +206,7 @@ function EventSection({
   )
 
   const contentPanel = (
-    <div className="relative flex flex-col justify-center px-8 py-14 sm:px-10 lg:px-14 xl:px-20 overflow-hidden">
+    <div className={`relative flex flex-col justify-center px-8 py-14 sm:px-10 lg:px-14 xl:px-20 overflow-hidden ${mobileImageFirst ? 'order-2 md:order-none' : 'order-1 md:order-none'}`}>
       {/* Large faded section number */}
       <div
         className="absolute font-display font-bold leading-none select-none pointer-events-none"
@@ -442,6 +446,7 @@ export default function App() {
         imgUrl={IMGS.anniversary}
         imgAlt="Đôi tình nhân dưới hàng hoa anh đào"
         imgLeft={false}
+        mobileImageFirst={true}
         glowColor="#ff6b9d"
         accentColor="#ff8fb3"
         sectionBg="#08010a"
