@@ -8,7 +8,7 @@ const PARTNER_NAME      = 'Em'
 
 const IMGS = {
   tet:         'https://images.unsplash.com/photo-1563354860-799d15199ac3?w=1400&h=1100&fit=crop&auto=format',
-  anniversary: '/Ani.jpg',
+  anniversary: new URL('./assets/Ani.jpg', import.meta.url).href,
   birthday:    'https://images.unsplash.com/photo-1680563899402-26c3a712831f?w=1400&h=1100&fit=crop&auto=format',
 }
 
