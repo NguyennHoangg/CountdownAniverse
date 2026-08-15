@@ -8,7 +8,7 @@ const PARTNER_NAME      = 'Em'
 
 const IMGS = {
   tet:         'https://images.unsplash.com/photo-1563354860-799d15199ac3?w=1400&h=1100&fit=crop&auto=format',
-  anniversary: 'https://images.unsplash.com/photo-1622285422722-b1b3eb36c728?w=1400&h=1100&fit=crop&auto=format',
+  anniversary: '../public/Ani.jpg',
   birthday:    'https://images.unsplash.com/photo-1680563899402-26c3a712831f?w=1400&h=1100&fit=crop&auto=format',
 }
 
@@ -173,7 +173,7 @@ function EventSection({
 
   const imgPanel = (
     <div
-      className={`relative h-[55vw] max-h-[480px] md:max-h-none md:h-full overflow-hidden ${mobileImageFirst ? 'order-1 md:order-none' : 'order-2 md:order-none'}`}
+      className="relative h-[55vw] max-h-120 md:max-h-none md:h-full overflow-hidden order-1 md:order-0"
       style={{ backgroundColor: '#111' }}
     >
       <img
@@ -206,7 +206,7 @@ function EventSection({
   )
 
   const contentPanel = (
-    <div className={`relative flex flex-col justify-center px-8 py-14 sm:px-10 lg:px-14 xl:px-20 overflow-hidden ${mobileImageFirst ? 'order-2 md:order-none' : 'order-1 md:order-none'}`}>
+    <div className="relative flex flex-col justify-center px-8 py-14 sm:px-10 lg:px-14 xl:px-20 overflow-hidden order-2 md:order-0">
       {/* Large faded section number */}
       <div
         className="absolute font-display font-bold leading-none select-none pointer-events-none"
@@ -403,6 +403,46 @@ function Footer() {
 // ── App ────────────────────────────────────────────────────
 export default function App() {
   const now = useNow()
+  const sectionsRef = useRef<Array<HTMLElement | null>>([])
+  const isAnimatingRef = useRef(false)
+
+  useEffect(() => {
+    const sections = sectionsRef.current.filter(Boolean) as HTMLElement[]
+    if (!sections.length) return
+
+    const handleWheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaY) < 18 || isAnimatingRef.current) return
+
+      event.preventDefault()
+
+      const currentIndex = sections.reduce((best, section, index) => {
+        const distance = Math.abs(section.getBoundingClientRect().top)
+        if (distance < best.distance) {
+          return { index, distance }
+        }
+        return best
+      }, { index: 0, distance: Number.POSITIVE_INFINITY }).index
+
+      const nextIndex = event.deltaY > 0
+        ? Math.min(currentIndex + 1, sections.length - 1)
+        : Math.max(currentIndex - 1, 0)
+
+      if (nextIndex === currentIndex) return
+
+      const target = sections[nextIndex]
+      if (!target) return
+
+      isAnimatingRef.current = true
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+      window.setTimeout(() => {
+        isAnimatingRef.current = false
+      }, 900)
+    }
+
+    window.addEventListener('wheel', handleWheel, { passive: false })
+    return () => window.removeEventListener('wheel', handleWheel)
+  }, [])
 
   const tetTime   = msToTime(TET_DATE.getTime() - now)
   const annivTime = msToTime(now - ANNIVERSARY_START.getTime())
@@ -411,66 +451,26 @@ export default function App() {
   const fmtDate = (d: Date) =>
     d.toLocaleDateString('vi-VN', { day: 'numeric', month: 'long', year: 'numeric' })
 
+  const sectionOrder = [
+    { id: 'hero', node: <HeroSection key="hero" /> },
+    { id: 'tet', node: <EventSection key="tet" id="tet" num="01" emoji="🏮" title="Tết Nguyên Đán" subtitle="Năm Đinh Mùi 2027" caption="Mùa xuân về, sum vầy bên nhau — khoảnh khắc ý nghĩa nhất trong năm." time={tetTime} mode="countdown" dateLabel={fmtDate(TET_DATE)} imgUrl={IMGS.tet} imgAlt="Đèn lồng Tết rực rỡ về đêm" imgLeft={true} glowColor="#e8a020" accentColor="#f5c540" sectionBg="#080400" /> },
+    { id: 'anniversary', node: <EventSection key="anniversary" id="anniversary" num="02" emoji="💕" title="Kỉ Niệm Yêu Nhau" subtitle={`Từ ${fmtDate(ANNIVERSARY_START)}`} caption="Mỗi ngày bên nhau là một trang kỷ niệm đẹp không bao giờ phai." time={annivTime} mode="countup" dateLabel="Mãi mãi yêu em ♡" imgUrl={IMGS.anniversary} imgAlt="Đôi tình nhân dưới hàng hoa anh đào" imgLeft={false} mobileImageFirst={true} glowColor="#ff6b9d" accentColor="#ff8fb3" sectionBg="#08010a" /> },
+    { id: 'birthday', node: <EventSection key="birthday" id="birthday" num="03" emoji="🎀" title={`Sinh Nhật ${PARTNER_NAME}`} subtitle="Ngày của người đặc biệt nhất" caption="Sinh ra là điều tuyệt vời nhất đã xảy ra với anh — chúc em sinh nhật hạnh phúc." time={bdayTime} mode="countdown" dateLabel={fmtDate(BIRTHDAY_DATE)} imgUrl={IMGS.birthday} imgAlt="Bó hoa hồng hồng tươi tắn" imgLeft={true} glowColor="#c084fc" accentColor="#d8a4ff" sectionBg="#060012" /> },
+    { id: 'footer', node: <Footer key="footer" /> },
+  ]
+
   return (
     <div>
-      <HeroSection />
-
-      <EventSection
-        id="tet"
-        num="01"
-        emoji="🏮"
-        title="Tết Nguyên Đán"
-        subtitle="Năm Đinh Mùi 2027"
-        caption="Mùa xuân về, sum vầy bên nhau — khoảnh khắc ý nghĩa nhất trong năm."
-        time={tetTime}
-        mode="countdown"
-        dateLabel={fmtDate(TET_DATE)}
-        imgUrl={IMGS.tet}
-        imgAlt="Đèn lồng Tết rực rỡ về đêm"
-        imgLeft={true}
-        glowColor="#e8a020"
-        accentColor="#f5c540"
-        sectionBg="#080400"
-      />
-
-      <EventSection
-        id="anniversary"
-        num="02"
-        emoji="💕"
-        title="Kỉ Niệm Yêu Nhau"
-        subtitle={`Từ ${fmtDate(ANNIVERSARY_START)}`}
-        caption="Mỗi ngày bên nhau là một trang kỷ niệm đẹp không bao giờ phai."
-        time={annivTime}
-        mode="countup"
-        dateLabel="Mãi mãi yêu em ♡"
-        imgUrl={IMGS.anniversary}
-        imgAlt="Đôi tình nhân dưới hàng hoa anh đào"
-        imgLeft={false}
-        mobileImageFirst={true}
-        glowColor="#ff6b9d"
-        accentColor="#ff8fb3"
-        sectionBg="#08010a"
-      />
-
-      <EventSection
-        id="birthday"
-        num="03"
-        emoji="🎀"
-        title={`Sinh Nhật ${PARTNER_NAME}`}
-        subtitle="Ngày của người đặc biệt nhất"
-        caption="Sinh ra là điều tuyệt vời nhất đã xảy ra với anh — chúc em sinh nhật hạnh phúc."
-        time={bdayTime}
-        mode="countdown"
-        dateLabel={fmtDate(BIRTHDAY_DATE)}
-        imgUrl={IMGS.birthday}
-        imgAlt="Bó hoa hồng hồng tươi tắn"
-        imgLeft={true}
-        glowColor="#c084fc"
-        accentColor="#d8a4ff"
-        sectionBg="#060012"
-      />
-
-      <Footer />
+      {sectionOrder.map((item, index) => (
+        <div
+          key={item.id}
+          ref={(node) => {
+            sectionsRef.current[index] = node as HTMLElement | null
+          }}
+        >
+          {item.node}
+        </div>
+      ))}
     </div>
   )
 }

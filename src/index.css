@@ -4,9 +4,23 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-snap-type: y proximity;
+    -webkit-overflow-scrolling: touch;
   }
+
   body {
     font-family: 'Nunito', sans-serif;
+    overflow-y: auto;
+    scroll-snap-type: y proximity;
+    overscroll-behavior-y: contain;
+  }
+
+  section,
+  #tet,
+  #anniversary,
+  #birthday {
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
   }
 }
 
